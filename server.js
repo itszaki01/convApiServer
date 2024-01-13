@@ -67,12 +67,12 @@ app.post("/fb-api", (0, express_async_handler_1.default)(async (req, res) => {
     const eventsData = [serverEvent];
     const eventRequest = new EventRequest(access_token, pixel_id).setEvents(eventsData);
     try {
-        eventRequest.execute();
-        res.json({ status: 'succes', message: 'Fb Api Service Working' });
+        await eventRequest.execute();
+        res.json({ status: "succes", message: "Fb Api Service Working" });
     }
     catch (_error) {
         const error = _error;
-        res.status(505).json({ status: 'error', message: "somthing wrong", error: error.message, stack: error.stack });
+        res.status(505).json({ status: "error", message: "somthing wrong", error: error.message, stack: error.stack });
     }
 }));
 const PORT = process.env.PORT;
