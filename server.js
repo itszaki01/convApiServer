@@ -63,7 +63,7 @@ app.post("/fb-api", (0, express_async_handler_1.default)(async (req, res) => {
         .setEventSourceUrl(req.body.eventSourceUrl)
         .setActionSource("website");
     const eventsData = [serverEvent];
-    const eventRequest = new EventRequest(access_token, pixel_id).setEvents(eventsData);
+    const eventRequest = new EventRequest(access_token, pixel_id).setEvents(eventsData).setTestEventCode('TEST77546');
     try {
         await eventRequest.execute();
         res.json({ status: "succes", message: "Fb Api Service Working" });
