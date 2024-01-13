@@ -40,19 +40,15 @@ const app = (0, express_1.default)();
 app.use(express_1.default.json());
 app.use(express_useragent_1.default.express());
 app.post("/fb-api", (0, express_async_handler_1.default)(async (req, res) => {
-    console.log(req.protocol);
     const access_token = req.body.fbApiToken;
     const pixel_id = req.body.pixelId;
     const api = bizSdk.FacebookAdsApi.init(access_token);
-    console.log(req.ip);
-    console.log(req.ips);
+    console.log(req.socket.remoteAddress);
     let current_timestamp = Math.floor(Date.now() / 1000);
     const userData = new UserData().setPhones([req.body.clientPhoneNumber]);
     // It is recommended to send Client IP and User Agent for Conversions API Events.
-    if (req.ip)
-        userData.setClientIpAddress(req.ip);
-    if (req.useragent)
-        userData.setClientUserAgent(JSON.stringify(req.useragent));
+    // if (req.ip) userData.setClientIpAddress(req.ip);
+    // if (req.useragent) userData.setClientUserAgent(JSON.stringify(req.useragent));
     if (req.body.fbp)
         userData.setFbp(req.body.fbp);
     if (req.body.fbc)
