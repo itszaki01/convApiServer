@@ -1,12 +1,10 @@
 {
-  "name": "afflita-conversion-api",
+  "name": "conversion-api",
   "version": "1.0.0",
   "description": "",
   "main": "server.js",
   "scripts": {
-    "build": "npx tsc",
-    "start:prod": "set NODE_ENV=PROD && set PORT=8000 && ts-node server.ts",
-    "start:dev": "set NODE_ENV=DEV && set PORT=8000 && nodemon server.ts"
+    "start": "node server.js"
   },
   "author": "",
   "license": "ISC",
