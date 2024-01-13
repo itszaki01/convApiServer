@@ -1,0 +1,31 @@
+{
+  "name": "afflita-conversion-api",
+  "version": "1.0.0",
+  "description": "",
+  "main": "server.js",
+  "scripts": {
+    "build": "npx tsc",
+    "start:prod": "set NODE_ENV=PROD && set PORT=8000 && ts-node server.ts",
+    "start:dev": "set NODE_ENV=DEV && set PORT=8000 && nodemon server.ts"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "dotenv": "^16.3.1",
+    "express": "^4.18.2",
+    "express-async-handler": "^1.2.0",
+    "express-useragent": "^1.0.15",
+    "express-validator": "^7.0.1",
+    "facebook-nodejs-business-sdk": "^18.0.4",
+    "mongoose": "^8.0.4"
+  },
+  "devDependencies": {
+    "@types/express": "^4.17.21",
+    "@types/express-useragent": "^1.0.5",
+    "@types/facebook-nodejs-business-sdk": "^18.0.0",
+    "@types/node": "^20.11.0",
+    "nodemon": "^3.0.2",
+    "ts-node": "^10.9.2",
+    "typescript": "^5.3.3"
+  }
+}
