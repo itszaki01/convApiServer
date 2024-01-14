@@ -120,7 +120,7 @@ app.post("/tiktopApi", (0, express_async_handler_1.default)(async (req, res) => 
                     quantity: req.body.quantity,
                     content_type: "product",
                     content_id: req.body.productId,
-                    content_name: req.body.productName
+                    content_name: req.body.productName,
                 },
             ],
             currency: req.body.currencyCode,
@@ -133,6 +133,9 @@ app.post("/tiktopApi", (0, express_async_handler_1.default)(async (req, res) => 
     //@ts-ignore
     if (req.body.ttp)
         data = { ...data, context: { ...data.context, user: { ...data.context.user, ttp: req.body.ttp } } };
+    //@ts-ignore
+    if (req.body.allowTestMode)
+        data = { ...data, test_event_code: req.body.testCode };
     try {
         await axios_1.default.post("https://business-api.tiktok.com/open_api/v1.2/pixel/track/", data, { headers });
         res.json({ status: "succes" });
