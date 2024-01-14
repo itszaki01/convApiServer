@@ -31,6 +31,7 @@ const express_async_handler_1 = __importDefault(require("express-async-handler")
 const bizSdk = __importStar(require("facebook-nodejs-business-sdk"));
 const express_useragent_1 = __importDefault(require("express-useragent"));
 const requestIp = __importStar(require("request-ip"));
+const cors_1 = __importDefault(require("cors"));
 const Content = bizSdk.Content;
 const CustomData = bizSdk.CustomData;
 const DeliveryCategory = bizSdk.DeliveryCategory;
@@ -41,6 +42,9 @@ const app = (0, express_1.default)();
 app.use(express_1.default.json());
 app.use(express_useragent_1.default.express());
 app.use(requestIp.mw());
+//allow other domains to access the api
+app.use((0, cors_1.default)());
+app.options("*", (0, cors_1.default)());
 app.post("/fb-api", (0, express_async_handler_1.default)(async (req, res) => {
     const access_token = req.body.access_token;
     const pixel_id = req.body.pixelId;
