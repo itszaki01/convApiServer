@@ -104,7 +104,7 @@ app.post("/tiktopApi", (0, express_async_handler_1.default)(async (req, res) => 
         context: {
             page: {
                 url: req.body.eventSourceUrl,
-                referrer: `${req.protocol}://${req.hostname}`,
+                referrer: req.body.hostName,
             },
             user: {
                 external_id: (0, js_sha256_1.sha256)(`${req.body.productId}${req.body.phoneNumber}`),
@@ -136,6 +136,7 @@ app.post("/tiktopApi", (0, express_async_handler_1.default)(async (req, res) => 
     //@ts-ignore
     if (req.body.allowTestMode)
         data = { ...data, test_event_code: req.body.testCode };
+    console.log(data);
     try {
         await axios_1.default.post("https://business-api.tiktok.com/open_api/v1.2/pixel/track/", data, { headers });
         res.json({ status: "succes" });
