@@ -30,6 +30,7 @@ const express_1 = __importDefault(require("express"));
 const express_async_handler_1 = __importDefault(require("express-async-handler"));
 const bizSdk = __importStar(require("facebook-nodejs-business-sdk"));
 const express_useragent_1 = __importDefault(require("express-useragent"));
+const requestIp = __importStar(require("request-ip"));
 const Content = bizSdk.Content;
 const CustomData = bizSdk.CustomData;
 const DeliveryCategory = bizSdk.DeliveryCategory;
@@ -39,22 +40,30 @@ const ServerEvent = bizSdk.ServerEvent;
 const app = (0, express_1.default)();
 app.use(express_1.default.json());
 app.use(express_useragent_1.default.express());
+app.use(requestIp.mw());
 app.post("/fb-api", (0, express_async_handler_1.default)(async (req, res) => {
-    const access_token = req.body.fbApiToken;
+    const access_token = req.body.access_token;
     const pixel_id = req.body.pixelId;
     const api = bizSdk.FacebookAdsApi.init(access_token);
-    console.log(req.socket.remoteAddress);
+    console.log(req.clientIp);
     let current_timestamp = Math.floor(Date.now() / 1000);
-    const userData = new UserData().setPhones([req.body.clientPhoneNumber]);
+    const userData = new UserData().setPhones([req.body.phoneNumber]);
     // It is recommended to send Client IP and User Agent for Conversions API Events.
-    // if (req.ip) userData.setClientIpAddress(req.ip);
-    // if (req.useragent) userData.setClientUserAgent(JSON.stringify(req.useragent));
+    if (req.clientIp)
+        userData.setClientIpAddress(req.clientIp);
+    if (req.useragent)
+        userData.setClientUserAgent(req.body.userAgent);
     if (req.body.fbp)
         userData.setFbp(req.body.fbp);
     if (req.body.fbc)
         userData.setFbc(req.body.fbc);
-    const content = new Content().setId("product123").setQuantity(1).setDeliveryCategory(DeliveryCategory.HOME_DELIVERY);
-    const customData = new CustomData().setContents([content]).setCurrency("usd").setValue(123.45);
+    const content = new Content()
+        .setId(req.body.productId)
+        .setQuantity(req.body.quantity)
+        .setDeliveryCategory(req.body.shippingType === "للمكتب" ? DeliveryCategory.CURBSIDE : DeliveryCategory.HOME_DELIVERY)
+        .setItemPrice(req.body.productPrice)
+        .setTitle(req.body.productName);
+    const customData = new CustomData().setContents([content]).setCurrency(req.body.currencyCode).setValue(req.body.totalPrice);
     const serverEvent = new ServerEvent()
         .setEventName("Purchase")
         .setEventTime(current_timestamp)
@@ -63,14 +72,14 @@ app.post("/fb-api", (0, express_async_handler_1.default)(async (req, res) => {
         .setEventSourceUrl(req.body.eventSourceUrl)
         .setActionSource("website");
     const eventsData = [serverEvent];
-    const eventRequest = new EventRequest(access_token, pixel_id).setEvents(eventsData).setTestEventCode('TEST77546');
+    const eventRequest = new EventRequest(access_token, pixel_id).setEvents(eventsData).setTestEventCode("TEST77546");
     try {
         await eventRequest.execute();
-        res.json({ status: "succes", message: "Fb Api Service Working" });
+        res.json({ status: "succes" });
     }
     catch (_error) {
         const error = _error;
-        res.status(505).json({ status: "error", message: "somthing wrong", error: error.message, stack: error.stack });
+        res.status(505).json({ status: "error", message: "somthing wrong", error: error.message });
     }
 }));
 const PORT = process.env.PORT;
