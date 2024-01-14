@@ -32,6 +32,7 @@ const bizSdk = __importStar(require("facebook-nodejs-business-sdk"));
 const express_useragent_1 = __importDefault(require("express-useragent"));
 const requestIp = __importStar(require("request-ip"));
 const cors_1 = __importDefault(require("cors"));
+const axios_1 = __importDefault(require("axios"));
 const Content = bizSdk.Content;
 const CustomData = bizSdk.CustomData;
 const DeliveryCategory = bizSdk.DeliveryCategory;
@@ -49,13 +50,12 @@ app.post("/fb-api", (0, express_async_handler_1.default)(async (req, res) => {
     const access_token = req.body.access_token;
     const pixel_id = req.body.pixelId;
     const api = bizSdk.FacebookAdsApi.init(access_token);
-    console.log(req.clientIp);
     let current_timestamp = Math.floor(Date.now() / 1000);
-    const userData = new UserData().setPhones([req.body.phoneNumber]);
+    const userData = new UserData().setPhone(req.body.phoneNumber);
     // It is recommended to send Client IP and User Agent for Conversions API Events.
     if (req.clientIp)
         userData.setClientIpAddress(req.clientIp);
-    if (req.useragent)
+    if (req.body.userAgent)
         userData.setClientUserAgent(req.body.userAgent);
     if (req.body.fbp)
         userData.setFbp(req.body.fbp);
@@ -74,7 +74,8 @@ app.post("/fb-api", (0, express_async_handler_1.default)(async (req, res) => {
         .setUserData(userData)
         .setCustomData(customData)
         .setEventSourceUrl(req.body.eventSourceUrl)
-        .setActionSource("website");
+        .setActionSource("website")
+        .setEventId(`${req.body.productId}${req.body.phoneNumber}`);
     const eventsData = [serverEvent];
     const eventRequest = new EventRequest(access_token, pixel_id).setEvents(eventsData);
     if (req.body.allowTestMode)
@@ -87,6 +88,9 @@ app.post("/fb-api", (0, express_async_handler_1.default)(async (req, res) => {
         const error = _error;
         res.status(505).json({ status: "error", message: "somthing wrong", error: error.message });
     }
+}));
+app.post('/tiktopApi', (0, express_async_handler_1.default)(async (req, res) => {
+    await axios_1.default.post('https://business-api.tiktok.com/open_api/v1.2/pixel/track/');
 }));
 const PORT = process.env.PORT;
 app.listen(PORT, () => {
