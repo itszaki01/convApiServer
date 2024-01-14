@@ -72,7 +72,9 @@ app.post("/fb-api", (0, express_async_handler_1.default)(async (req, res) => {
         .setEventSourceUrl(req.body.eventSourceUrl)
         .setActionSource("website");
     const eventsData = [serverEvent];
-    const eventRequest = new EventRequest(access_token, pixel_id).setEvents(eventsData).setTestEventCode("TEST77546");
+    const eventRequest = new EventRequest(access_token, pixel_id).setEvents(eventsData);
+    if (req.body.allowTestMode)
+        eventRequest.setTestEventCode(req.body.testCode);
     try {
         await eventRequest.execute();
         res.json({ status: "succes" });
