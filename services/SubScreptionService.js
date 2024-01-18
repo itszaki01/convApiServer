@@ -27,7 +27,7 @@ exports.getSubScreptionById = (0, express_async_handler_1.default)(async (req, r
     //1:check if subscreption is exist
     const subScreption = await subScriptionModel_1.SubScription.findById(req.params.id);
     if (!subScreption) {
-        res.status(403).json({ status: 'error', message: 'You dont have access to use script' });
+        res.status(403).json({ status: 'error', message: 'You dont have the access to use script' });
         return next(new Error('no access'));
     }
     res.json({
