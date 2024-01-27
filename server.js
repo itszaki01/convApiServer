@@ -30,10 +30,10 @@ const express_1 = __importDefault(require("express"));
 const express_useragent_1 = __importDefault(require("express-useragent"));
 const requestIp = __importStar(require("request-ip"));
 const cors_1 = __importDefault(require("cors"));
-const conversioinApiRoutes_1 = require("./routes/conversioinApiRoutes");
 const dotenv_1 = __importDefault(require("dotenv"));
 const connectDB_1 = require("./db/connectDB");
 const SubScreptionRoutes_1 = require("./routes/SubScreptionRoutes");
+const VersionsRoutes_1 = require("./routes/VersionsRoutes");
 dotenv_1.default.config({ path: "./config.env" });
 const app = (0, express_1.default)();
 (0, connectDB_1.connectDb)();
@@ -43,8 +43,8 @@ app.use(requestIp.mw());
 //allow other domains to access the api
 app.use((0, cors_1.default)());
 app.options("*", (0, cors_1.default)());
-app.use('/conv-api', conversioinApiRoutes_1.conversionApiRoutes);
 app.use('/subScreptions', SubScreptionRoutes_1.subScreptionRoutes);
+app.use('/version', VersionsRoutes_1.versionRouter);
 const PORT = process.env.PORT;
 app.listen(PORT, () => {
     console.log("server Listen on port ", PORT);
