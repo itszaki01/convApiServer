@@ -3,7 +3,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.getSubScreptionByHostName = exports.getSubScreptionById = exports.createNewSubScreption = exports.getAllSubScreptions = void 0;
+exports.getSubScreptionByHostName = exports.getSubScreptionById = exports.createNewSubScreption = exports.getAllSubScreptionsByAgencyId = exports.getAllSubScreptions = void 0;
 const express_async_handler_1 = __importDefault(require("express-async-handler"));
 const subScriptionModel_1 = require("../models/subScriptionModel");
 exports.getAllSubScreptions = (0, express_async_handler_1.default)(async (req, res) => {
@@ -13,14 +13,22 @@ exports.getAllSubScreptions = (0, express_async_handler_1.default)(async (req, r
         data: subScreptions
     });
 });
+exports.getAllSubScreptionsByAgencyId = (0, express_async_handler_1.default)(async (req, res) => {
+    const subScreptions = await subScriptionModel_1.SubScription.find({ agency: req.params.agencyId });
+    res.json({
+        status: 'success',
+        data: subScreptions
+    });
+});
 exports.createNewSubScreption = (0, express_async_handler_1.default)(async (req, res) => {
     //1:create new subscreption
-    const subScreption = await subScriptionModel_1.SubScription.create({ hostName: req.body.hostName });
+    const subScreption = await subScriptionModel_1.SubScription.create(req.body);
     //2:return id & host
     res.json({
         status: 'success',
         subScreptionId: subScreption.id,
-        hostName: subScreption.hostName
+        hostName: subScreption.hostName,
+        subScreption
     });
 });
 exports.getSubScreptionById = (0, express_async_handler_1.default)(async (req, res, next) => {
@@ -32,9 +40,7 @@ exports.getSubScreptionById = (0, express_async_handler_1.default)(async (req, r
     }
     res.json({
         status: 'success',
-        data: {
-            hostName: subScreption.hostName
-        }
+        data: subScreption
     });
 });
 exports.getSubScreptionByHostName = (0, express_async_handler_1.default)(async (req, res, next) => {
@@ -46,8 +52,6 @@ exports.getSubScreptionByHostName = (0, express_async_handler_1.default)(async (
     }
     res.json({
         status: 'success',
-        data: {
-            hostName: subScreption.hostName
-        }
+        data: subScreption
     });
 });

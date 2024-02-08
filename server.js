@@ -34,6 +34,9 @@ const dotenv_1 = __importDefault(require("dotenv"));
 const connectDB_1 = require("./db/connectDB");
 const SubScreptionRoutes_1 = require("./routes/SubScreptionRoutes");
 const VersionsRoutes_1 = require("./routes/VersionsRoutes");
+const AgencyRoutes_1 = require("./routes/AgencyRoutes");
+const route404Hanlder_1 = require("./middlewares/route404Hanlder");
+const expressErrorHandler_1 = require("./middlewares/expressErrorHandler");
 dotenv_1.default.config({ path: "./config.env" });
 const app = (0, express_1.default)();
 (0, connectDB_1.connectDb)();
@@ -44,8 +47,26 @@ app.use(requestIp.mw());
 app.use((0, cors_1.default)());
 app.options("*", (0, cors_1.default)());
 app.use('/subScreptions', SubScreptionRoutes_1.subScreptionRoutes);
+app.use('/agencies', AgencyRoutes_1.agencyRoutes);
 app.use('/version', VersionsRoutes_1.versionRouter);
+//Express Error Hanlders
+app.all("*", route404Hanlder_1.route404Hanlder);
+app.use(expressErrorHandler_1.expressErrorHandler);
 const PORT = process.env.PORT;
-app.listen(PORT, () => {
+const server = app.listen(PORT, () => {
     console.log("server Listen on port ", PORT);
+});
+//Rejection Handler
+process.on("unhandledRejection", (err) => {
+    console.log(`\n -----------------------------------------
+        \n => Unhandled Error: ${err}
+        \n -----------------------------------------
+        \n => Message: ${err.message}
+        \n -----------------------------------------
+        \n => Stack ${err.stack}
+        \n -----------------------------------------`);
+    server.close(() => {
+        console.log("Server Shutdown...");
+        process.exit(1);
+    });
 });
